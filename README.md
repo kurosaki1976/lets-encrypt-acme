@@ -1,4 +1,4 @@
-# Let's Encrypt Certifcates with acme.sh
+# Let's Encrypt Certificates with acme.sh
 
 ## Installation
 
