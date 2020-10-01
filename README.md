@@ -56,15 +56,9 @@ And the full chain certs is there:  /opt/.acme.sh/example.tld/fullchain.cer
 ## Automate certificate renewal
 
 ```bash
-acme.sh --install-cronjob
-```
+crontab -e
 
-or
-
-```bash
-nano /etc/crontab
-
-0 0 1 */3 * root acme.sh --renew -d example.tld -d *.example.tld --days 90 --yes-I-know-dns-manual-mode-enough-go-ahead-please > /dev/null
+0 0 1 */3 * "/opt/acme.sh"/acme.sh --renew -d example.tld -d *.example.tld --days 90 --yes-I-know-dns-manual-mode-enough-go-ahead-please > /dev/null
 ```
 
 ## Stop certificate renewal
