@@ -6,7 +6,7 @@
 apt install git socat
 git clone https://github.com/acmesh-official/acme.sh.git
 cd ./acme.sh
-./acme.sh --install
+./acme.sh --install \
 	--home /opt/acme.sh \
 	--config-home /opt/acme.sh/data \
 	--cert-home /opt/acme.sh/certs \
