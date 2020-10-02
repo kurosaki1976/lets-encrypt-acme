@@ -1,5 +1,9 @@
 # Let's Encrypt Certificates with acme.sh
 
+## Author
+
+- [Ixen Rodríguez Pérez - kurosaki1976](ixenrp1976@gmail.com)
+
 ## Installation
 
 ```bash
