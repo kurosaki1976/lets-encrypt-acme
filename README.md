@@ -169,15 +169,11 @@ chmod 0400 /etc/ssl/private/example.tld.key
 ```bash
 nano /etc/apache2/sites-available/exampleTLD.conf
 
+...
 SSLEngine on
 SSLCertificateFile /etc/ssl/certs/example.tld.cer
 SSLCertificateKeyFile /etc/ssl/private/example.tld.key
-SSLOpenSSLConfCmd DHParameters "/etc/ssl/dh2048.pem"
-SSLProtocol all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
-SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
-SSLHonorCipherOrder on
-SSLCompression off
-SSLOptions +StrictRequire
+...
 ```
 
 Test settings, if syntax returns `OK`, restart the web service:
@@ -198,17 +194,11 @@ chmod 0400 /etc/ssl/private/example.tld.key
 ```bash
 nano /etc/nginx/sites-available/exampleTLD
 
+...
 ssl on;
 ssl_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
 ssl_certificate_key /etc/ssl/private/example.tld.key;
-ssl_dhparam /etc/ssl/dh2048.pem;
-ssl_protocols TLSv1.2;
-ssl_prefer_server_ciphers on;
-ssl_ciphers "EEECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-ssl_ecdh_curve secp384r1;
-ssl_session_cache shared:SSL:10m;
-ssl_session_tickets off;
-ssl_stapling_verify on;
+...
 ```
 
 Test settings, if syntax returns `OK`, restart the web service:
@@ -226,3 +216,4 @@ systemctl restart nginx.service
 * [Deploy Commercial SSL Certificate on Proxmox Mail Gateway](https://dhenandi.com/deploy-commercial-ssl-certificate-on-proxmox-mail-gateway/)
 * [How To Secure Apache with Let's Encrypt on Debian 10](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-debian-10)
 * [Request a free cert from Let's Encrypt](https://docs.iredmail.org/letsencrypt.html)
+* [Update: Using Free Let’s Encrypt SSL/TLS Certificates with NGINX](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
