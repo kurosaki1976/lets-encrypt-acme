@@ -104,6 +104,30 @@ su - zimbra
 $ echo QUIT | openssl s_client -connect mail.example.tld:443 | openssl x509 -noout -text | less
 ```
 
+### Let's Encrypt SSL Certificate on iRedMail Server
+
+```bash
+mkdir /opt/zimbra/ssl/letsencrypt
+mv example.tld.{cer,key} /opt/zimbra/ssl/letsencrypt
+```
+```bash
+mv /etc/ssl/certs/iRedMail.crt{,.bak}
+mv /etc/ssl/private/iRedMail.key{,.bak}
+ln -s /opt/zimbra/ssl/letsencrypt/example.tld.cer /etc/ssl/certs/iRedMail.crt
+ln -s /opt/zimbra/ssl/letsencrypt/example.tld.key /etc/ssl/private/iRedMail.key
+```
+
+Restart related services
+
+```bash
+systemctl restart postfix.service dovecot.service nginx.service
+```
+
 ## References
 
 * [acme.sh A pure Unix shell script implementing ACME client protocol](https://github.com/acmesh-official/acme.sh)
+* [cerbot](https://certbot.eff.org/)
+* [Installing a Let's Encrypt SSL Certificate](https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate)
+* [Deploy Commercial SSL Certificate on Proxmox Mail Gateway](https://dhenandi.com/deploy-commercial-ssl-certificate-on-proxmox-mail-gateway/)
+* [How To Secure Apache with Let's Encrypt on Debian 10](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-debian-10)
+* [Request a free cert from Let's Encrypt](https://docs.iredmail.org/letsencrypt.html)
