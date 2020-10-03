@@ -132,10 +132,57 @@ chmod 0640 /etc/pmg/pmg-api.pem
 chown root.www-data /etc/pmg/pmg-api.pem
 ```
 
-Restart related services
+Restart related service
 
 ```bash
 systemctl restart pmgproxy.service
+```
+
+### Let's Encrypt SSL Certificate on Proxmox Vitual Environment
+
+Use the Web GUI to deploy the files "example.tld.cer" and "example.tld.key".
+
+```
+(Datacenter/"Proxmox Node"/System/Certificates/Upload Custom Certificate)
+```
+
+### Let's Encrypt SSL Certificate on pfSense Firewall
+
+Use the Web GUI to deploy the files "example.tld.cer" and "example.tld.key".
+
+```
+(System/Certificate Manager/Certificates/"Add/Sign Button"/Method "Import an existing Certificate")
+
+(System/Advanced/Admin Access/SSL/TLS Certificate)
+```
+
+### Let's Encrypt SSL Certificate on Apache Web Server
+
+```bash
+mv example.tld.cer /etc/ssl/certs/
+mv example.tld.key /etc/ssl/private/
+chmod 0444 /etc/ssl/certs/example.tld.cer
+chmod 0400 /etc/ssl/private/example.tld.key
+```
+```bash
+nano /etc/apache2/sites-available/exampleTLD.conf
+
+SSLEngine on
+SSLCertificateFile /etc/ssl/certs/example.tld.cer
+SSLCertificateKeyFile /etc/ssl/private/example.tld.key
+SSLOpenSSLConfCmd DHParameters "/etc/ssl/dh2048.pem"
+SSLProtocol all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLHonorCipherOrder on
+SSLCompression off
+SSLOptions +StrictRequire
+```
+
+Test settings, if syntax returns `OK`, restart the web service:
+
+```bash
+apache2ctl -t
+systemctl restart apache2.service
 ```
 
 ## References
