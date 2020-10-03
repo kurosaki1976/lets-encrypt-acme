@@ -43,7 +43,15 @@ Next, you should add these two `TXT` records to your `example.tld` forward zone:
 
 ```bash
 _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDgcDs"
-_acme-challenge.example.tld. 60 IN TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
+                                   TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
+```
+
+To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following CAA record:
+
+```bash
+example.tld. 60 IN CAA 0 issue "letsencrypt.org"
+                   CAA 0 issuewild "letsencrypt.org"
+                   CAA 0 iodef "mailto:postmaster@example.tld"
 ```
 
 ## Renew the certificate
@@ -161,9 +169,10 @@ Use the Web GUI to deploy the files `example.tld.cer` and `example.tld.key`.
 ### Let's Encrypt SSL Certificate on Apache Web Server
 
 ```bash
+mv fullchain.cer /etc/ssl/certs/exampleTLD.fullchain.cer
 mv example.tld.cer /etc/ssl/certs/
 mv example.tld.key /etc/ssl/private/
-chmod 0444 /etc/ssl/certs/example.tld.cer
+chmod 0444 /etc/ssl/certs/{example.tld,xampleTLD.fullchain}.cer
 chmod 0400 /etc/ssl/private/example.tld.key
 ```
 ```bash
@@ -173,6 +182,20 @@ nano /etc/apache2/sites-available/exampleTLD.conf
 SSLEngine on
 SSLCertificateFile /etc/ssl/certs/example.tld.cer
 SSLCertificateKeyFile /etc/ssl/private/example.tld.key
+SSLCACertificateFile "/etc/ssl/certs/exampleTLD.fullchain.cer"
+SSLCACertificatePath "/etc/ssl/certs/"
+SSLProtocol -all +TLSv1.3 +TLSv1.2
+SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+#SSLCipherSuite RC4-SHA:AES128-SHA:HIGH:!aNULL:!MD5
+SSLHonorCipherOrder On
+Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+SSLCompression off
+SSLUseStapling on
+SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+SSLSessionTickets Off
 ...
 ```
 
@@ -198,6 +221,12 @@ nano /etc/nginx/sites-available/exampleTLD
 ssl on;
 ssl_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
 ssl_certificate_key /etc/ssl/private/example.tld.key;
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+ssl_prefer_server_ciphers on;
+ssl_stapling on;
+ssl_stapling_verify on;
+ssl_trusted_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
 ...
 ```
 
@@ -219,3 +248,10 @@ systemctl restart nginx.service
 * [Update: Using Free Let’s Encrypt SSL/TLS Certificates with NGINX](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
 * [Installing Let’s Encrypt SSL Certificate with pfSense](https://gainanov.pro/eng-blog/linux/installing-lets-encrypt-pfsense/)
 * [Let's Encrypt on pfSense](https://www.netgate.com/resources/videos/lets-encrypt-on-pfsense.html)
+* [How to issue Let’s Encrypt wildcard certificate with acme.sh and Cloudflare DNS](https://www.cyberciti.biz/faq/issue-lets-encrypt-wildcard-certificate-with-acme-sh-and-cloudflare-dns/)
+* [CAA Records](https://support.dnsimple.com/articles/caa-record/)
+* [CAA Record Helper](https://sslmate.com/caa/)
+* [SSL/TLS Strong Encryption: How-To](https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html)
+* [Apache Module mod_ssl](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslcacertificatefile)
+* [Cipherli.st Strong Ciphers for Apache, nginx and Lighttpd](https://syslink.pl/cipherlist/)
+* [SSL Server Test](https://www.ssllabs.com/ssltest)
