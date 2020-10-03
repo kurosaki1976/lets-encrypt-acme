@@ -185,6 +185,37 @@ apache2ctl -t
 systemctl restart apache2.service
 ```
 
+### Let's Encrypt SSL Certificate on Nginx Web Server
+
+```bash
+mv fullchain.cer /etc/ssl/certs/exampleTLD.fullchain.cer
+mv example.tld.key /etc/ssl/private/
+chmod 0444 /etc/ssl/certs/exampleTLD.fullchain.cer
+chmod 0400 /etc/ssl/private/example.tld.key
+```
+```bash
+nano /etc/nginx/sites-available/exampleTLD
+
+ssl on;
+ssl_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
+ssl_certificate_key /etc/ssl/private/example.tld.key;
+ssl_dhparam /etc/ssl/dh2048.pem;
+ssl_protocols TLSv1.2;
+ssl_prefer_server_ciphers on;
+ssl_ciphers "EEECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+ssl_ecdh_curve secp384r1;
+ssl_session_cache shared:SSL:10m;
+ssl_session_tickets off;
+ssl_stapling_verify on;
+```
+
+Test settings, if syntax returns `OK`, restart the web service:
+
+```bash
+nginx -t
+systemctl restart nginx.service
+```
+
 ## References
 
 * [acme.sh A pure Unix shell script implementing ACME client protocol](https://github.com/acmesh-official/acme.sh)
