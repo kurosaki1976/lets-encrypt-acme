@@ -123,6 +123,21 @@ Restart related services
 systemctl restart postfix.service dovecot.service nginx.service
 ```
 
+### Let's Encrypt SSL Certificate on Proxmox Mail Gateway
+
+```bash
+mv /etc/pmg/pmg-api.pem{,.org}
+cat example.tld.key example.tld.cer > /etc/pmg/pmg-api.pem
+chmod 0640 /etc/pmg/pmg-api.pem
+chown root.www-data /etc/pmg/pmg-api.pem
+```
+
+Restart related services
+
+```bash
+systemctl restart pmgproxy.service
+```
+
 ## References
 
 * [acme.sh A pure Unix shell script implementing ACME client protocol](https://github.com/acmesh-official/acme.sh)
