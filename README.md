@@ -49,8 +49,7 @@ _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDg
 To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following CAA record:
 
 ```bash
-example.tld. 60 IN CAA 0 issue "letsencrypt.org"
-                   CAA 0 issuewild "letsencrypt.org"
+example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
                    CAA 0 iodef "mailto:postmaster@example.tld"
 ```
 
