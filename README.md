@@ -182,20 +182,16 @@ nano /etc/apache2/sites-available/exampleTLD.conf
 SSLEngine on
 SSLCertificateFile /etc/ssl/certs/example.tld.cer
 SSLCertificateKeyFile /etc/ssl/private/example.tld.key
-SSLCACertificateFile "/etc/ssl/certs/exampleTLD.fullchain.cer"
-SSLCACertificatePath "/etc/ssl/certs/"
+SSLCertificateChainFile "/etc/ssl/certs/exampleTLD.fullchain.cer"
 SSLProtocol -all +TLSv1.3 +TLSv1.2
 SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
-SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
-#SSLCipherSuite RC4-SHA:AES128-SHA:HIGH:!aNULL:!MD5
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM
 SSLHonorCipherOrder On
 Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
 Header always set X-Frame-Options DENY
 Header always set X-Content-Type-Options nosniff
 SSLCompression off
-SSLUseStapling on
-SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
-SSLSessionTickets Off
+SSLSessionTickets off
 ...
 ```
 
@@ -222,7 +218,7 @@ ssl on;
 ssl_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
 ssl_certificate_key /etc/ssl/private/example.tld.key;
 ssl_protocols TLSv1.2 TLSv1.3;
-ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
 ssl_prefer_server_ciphers on;
 ssl_stapling on;
 ssl_stapling_verify on;
