@@ -107,14 +107,14 @@ $ echo QUIT | openssl s_client -connect mail.example.tld:443 | openssl x509 -noo
 ### Let's Encrypt SSL Certificate on iRedMail Server
 
 ```bash
-mkdir /opt/zimbra/ssl/letsencrypt
-mv example.tld.{cer,key} /opt/zimbra/ssl/letsencrypt
+mkdir /opt/letsencrypt
+mv example.tld.{cer,key} /opt/letsencrypt
 ```
 ```bash
 mv /etc/ssl/certs/iRedMail.crt{,.bak}
 mv /etc/ssl/private/iRedMail.key{,.bak}
-ln -s /opt/zimbra/ssl/letsencrypt/example.tld.cer /etc/ssl/certs/iRedMail.crt
-ln -s /opt/zimbra/ssl/letsencrypt/example.tld.key /etc/ssl/private/iRedMail.key
+ln -s /opt/letsencrypt/example.tld.cer /etc/ssl/certs/iRedMail.crt
+ln -s /opt/letsencrypt/example.tld.key /etc/ssl/private/iRedMail.key
 ```
 
 Restart related services
