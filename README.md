@@ -109,6 +109,8 @@ $ echo QUIT | openssl s_client -connect mail.example.tld:443 | openssl x509 -noo
 ```bash
 mkdir /opt/letsencrypt
 mv example.tld.{cer,key} /opt/letsencrypt
+chmod 0444 /opt/letsencrypt/example.tld.cer
+chmod 0400 /opt/letsencrypt/example.tld.key
 ```
 ```bash
 mv /etc/ssl/certs/iRedMail.crt{,.bak}
