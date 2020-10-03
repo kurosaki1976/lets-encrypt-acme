@@ -250,3 +250,4 @@ systemctl restart nginx.service
 * [Apache Module mod_ssl](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslcacertificatefile)
 * [Cipherli.st Strong Ciphers for Apache, nginx and Lighttpd](https://syslink.pl/cipherlist/)
 * [SSL Server Test](https://www.ssllabs.com/ssltest)
+* [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
