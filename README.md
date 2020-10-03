@@ -140,7 +140,7 @@ systemctl restart pmgproxy.service
 
 ### Let's Encrypt SSL Certificate on Proxmox Vitual Environment
 
-Use the Web GUI to deploy the files "example.tld.cer" and "example.tld.key".
+Use the Web GUI to deploy the files `example.tld.cer` and `example.tld.key`.
 
 ```
 (Datacenter/"Proxmox Node"/System/Certificates/Upload Custom Certificate)
@@ -148,7 +148,7 @@ Use the Web GUI to deploy the files "example.tld.cer" and "example.tld.key".
 
 ### Let's Encrypt SSL Certificate on pfSense Firewall
 
-Use the Web GUI to deploy the files "example.tld.cer" and "example.tld.key".
+Use the Web GUI to deploy the files `example.tld.cer` and `example.tld.key`.
 
 ```
 (System/Certificate Manager/Certificates/"Add/Sign Button"/Method "Import an existing Certificate")
