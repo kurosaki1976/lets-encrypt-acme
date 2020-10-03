@@ -71,6 +71,39 @@ crontab -e
 acme.sh --remove -d example.tld -d *.example.tld
 ```
 
+## Deploy the Let's Encrypt SSL Certificate on services
+
+### Let's Encrypt SSL Certificate on Zimbra
+
+```bash
+mkdir /opt/zimbra/ssl/letsencrypt
+mv example.tld.key fullchain.cer /opt/zimbra/ssl/letsencrypt/
+cd /opt/zimbra/ssl/letsencrypt/
+wget https://letsencrypt.org/certs/trustid-x3-root.pem.txt
+cat fullchain.cer trustid-x3-root.pem.txt > chain.pem
+chown zimbra.zimbra *
+```
+```bash
+su - zimbra
+$ cd /opt/zimbra/ssl/letsencrypt/
+$ /opt/zimbra/bin/zmcertmgr verifycrt comm example.tld.key fullchain.cer chain.pem
+cp -a /opt/zimbra/ssl/zimbra /opt/zimbra/ssl/zimbra.$(date "+%Y%m%d")
+cp example.tld.key /opt/zimbra/ssl/zimbra/commercial/commercial.key
+```
+```bash
+su - zimbra
+$ cd /opt/zimbra/ssl/letsencrypt/
+$ /opt/zimbra/bin/zmcertmgr deploycrt comm fullchain.cer chain.pem
+$ zmcontrol restart
+```
+
+Test the certificate
+
+```bash
+su - zimbra
+$ echo QUIT | openssl s_client -connect mail.example.tld:443 | openssl x509 -noout -text | less
+```
+
 ## References
 
 * [acme.sh A pure Unix shell script implementing ACME client protocol](https://github.com/acmesh-official/acme.sh)
