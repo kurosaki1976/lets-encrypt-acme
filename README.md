@@ -1,4 +1,4 @@
-# Let's Encrypt Certificates with acme.sh
+# Let's Encrypt SSL wildcard certificates with acme.sh
 
 ## Author
 
@@ -19,7 +19,7 @@ cd ./acme.sh
 	--accountconf /opt/acme.sh/example.tld.conf
 ```
 
-> **NOTE**: The installation process takes place on a Bind9 DNS server.
+> **NOTE**: The installation process takes place on a Bind9 DNS server running GNU/Linux Debian 10 Buster.
 
 ## Issue a certificate
 
@@ -46,11 +46,11 @@ _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDg
                                    TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
 ```
 
-To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following CAA record:
+To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
 
 ```bash
 example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
-                   CAA 0 iodef "mailto:postmaster@example.tld"
+				   CAA 0 iodef "mailto:postmaster@example.tld"
 ```
 
 ## Renew the certificate
@@ -183,12 +183,16 @@ SSLCertificateFile /etc/ssl/certs/example.tld.cer
 SSLCertificateKeyFile /etc/ssl/private/example.tld.key
 SSLCertificateChainFile "/etc/ssl/certs/exampleTLD.fullchain.cer"
 SSLProtocol -all +TLSv1.3 +TLSv1.2
-SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
 SSLCipherSuite EECDH+AESGCM:EDH+AESGCM
-SSLHonorCipherOrder On
+SSLHonorCipherOrder on
+SSLOpenSSLConfCmd Curves X25519:secp521r1:secp384r1:prime256v1
+SSLOpenSSLConfCmd DHParameters "/etc/ssl/dh4096.pem"
 Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-Header always set X-Frame-Options DENY
+Header always set X-Frame-Options SAMEORIGIN
 Header always set X-Content-Type-Options nosniff
+Header always set Content-Security-Policy "default-src 'self';"
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Set-Cookie "HttpOnly;Secure"
 SSLCompression off
 SSLSessionTickets off
 ...
@@ -216,12 +220,19 @@ nano /etc/nginx/sites-available/exampleTLD
 ssl on;
 ssl_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
 ssl_certificate_key /etc/ssl/private/example.tld.key;
+ssl_dhparam /etc/ssl/dh4096.pem;
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
+ssl_ecdh_curve secp384r1;
 ssl_prefer_server_ciphers on;
-ssl_stapling on;
-ssl_stapling_verify on;
-ssl_trusted_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
+ssl_session_tickets off;
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-XSS-Protection "1; mode=block";
+add_header X-Content-Type-Options "nosniff";
+add_header Content-Security-Policy "default-src 'self';" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Set-Cookie "HttpOnly;Secure" always;
 ...
 ```
 
@@ -251,3 +262,4 @@ systemctl restart nginx.service
 * [Cipherli.st Strong Ciphers for Apache, nginx and Lighttpd](https://syslink.pl/cipherlist/)
 * [SSL Server Test](https://www.ssllabs.com/ssltest)
 * [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
+* [SSL Server Rating Guide](https://github.com/ssllabs/research/wiki/SSL-Server-Rating-Guide)
