@@ -50,7 +50,7 @@ To allow Let’s Encrypt certificate authority the issuance of SSL certificates 
 
 ```bash
 example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
-				   CAA 0 iodef "mailto:postmaster@example.tld"
+                   CAA 0 iodef "mailto:postmaster@example.tld"
 ```
 
 ## Renew the certificate
