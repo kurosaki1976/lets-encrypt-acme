@@ -136,7 +136,7 @@ systemctl restart postfix.service dovecot.service nginx.service
 
 ```bash
 mv /etc/pmg/pmg-api.pem{,.org}
-cat example.tld.key example.tld.cer > /etc/pmg/pmg-api.pem
+cat example.tld.key fullchain.cer > /etc/pmg/pmg-api.pem
 chmod 0640 /etc/pmg/pmg-api.pem
 chown root.www-data /etc/pmg/pmg-api.pem
 ```
@@ -149,15 +149,30 @@ systemctl restart pmgproxy.service
 
 ### Let's Encrypt SSL Certificate on Proxmox Vitual Environment
 
-Use the Web GUI to deploy the files `example.tld.cer` and `example.tld.key`.
+Use the Web GUI to deploy the files `fullchain.cer` and `example.tld.key`.
 
 ```
 (Datacenter/"Proxmox Node"/System/Certificates/Upload Custom Certificate)
 ```
 
+Tough the recommended method is by using the Web GUI, the command line could be used as well:
+
+```bash
+cp fullchain.cer /etc/pve/nodes/NODENAME/pveproxy-ssl.pem
+cp example.tld.key /etc/pve/nodes/NODENAME/pveproxy-ssl.key
+chmod 0640 /etc/pve/nodes/NODENAME/pveproxy-ssl.*
+chown root.www-data /etc/pve/nodes/NODENAME/pveproxy-ssl.*
+```
+
+Restart related service
+
+```bash
+systemctl restart pveproxy.service
+```
+
 ### Let's Encrypt SSL Certificate on pfSense Firewall
 
-Use the Web GUI to deploy the files `example.tld.cer` and `example.tld.key`.
+Use the Web GUI to deploy the files `fullchain.cer` and `example.tld.key`.
 
 ```
 (System/Certificate Manager/Certificates/"Add/Sign Button"/Method "Import an existing Certificate")
