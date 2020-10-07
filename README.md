@@ -158,10 +158,10 @@ Use the Web GUI to deploy the files `fullchain.cer` and `example.tld.key`.
 Tough the recommended method is by using the Web GUI, the command line could be used as well:
 
 ```bash
-cp fullchain.cer /etc/pve/nodes/NODENAME/pveproxy-ssl.pem
-cp example.tld.key /etc/pve/nodes/NODENAME/pveproxy-ssl.key
-chmod 0640 /etc/pve/nodes/NODENAME/pveproxy-ssl.*
-chown root.www-data /etc/pve/nodes/NODENAME/pveproxy-ssl.*
+cp fullchain.cer /etc/pve/local/pveproxy-ssl.pem
+cp example.tld.key /etc/pve/local/pveproxy-ssl.key
+chmod 0640 /etc/pve/local/pveproxy-ssl.*
+chown root.www-data /etc/pve/local/pveproxy-ssl.*
 ```
 
 Restart related service
