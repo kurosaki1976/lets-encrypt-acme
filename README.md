@@ -249,6 +249,7 @@ systemctl restart nginx.service
 * [cerbot](https://certbot.eff.org/)
 * [Installing a Let's Encrypt SSL Certificate](https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate)
 * [Deploy Commercial SSL Certificate on Proxmox Mail Gateway](https://dhenandi.com/deploy-commercial-ssl-certificate-on-proxmox-mail-gateway/)
+* [Certificate Management](https://pve.proxmox.com/wiki/Certificate_Management)
 * [How To Secure Apache with Let's Encrypt on Debian 10](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-debian-10)
 * [Request a free cert from Let's Encrypt](https://docs.iredmail.org/letsencrypt.html)
 * [Update: Using Free Let’s Encrypt SSL/TLS Certificates with NGINX](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
