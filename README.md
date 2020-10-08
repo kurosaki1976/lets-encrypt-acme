@@ -134,6 +134,17 @@ systemctl restart postfix.service dovecot.service nginx.service
 
 ### Let's Encrypt SSL Certificate on Proxmox Mail Gateway
 
+#### Mail certificate
+
+```bash
+mv /etc/pmg/pmg-tls.pem{,.org}
+cat example.tld.key fullchain.cer > /etc/pmg/pmg-tls.pem
+chmod 0600 /etc/pmg/pmg-tls.pem
+chown root.root /etc/pmg/pmg-tls.pem
+```
+
+#### HTTPs certificate
+
 ```bash
 mv /etc/pmg/pmg-api.pem{,.org}
 cat example.tld.key fullchain.cer > /etc/pmg/pmg-api.pem
@@ -265,6 +276,7 @@ systemctl restart nginx.service
 * [Installing a Let's Encrypt SSL Certificate](https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate)
 * [Deploy Commercial SSL Certificate on Proxmox Mail Gateway](https://dhenandi.com/deploy-commercial-ssl-certificate-on-proxmox-mail-gateway/)
 * [Certificate Management](https://pve.proxmox.com/wiki/Certificate_Management)
+* [How-To -- Lets Encrypt and PMG](https://forum.proxmox.com/threads/how-to-lets-encrypt-and-pmg.41493/)
 * [How To Secure Apache with Let's Encrypt on Debian 10](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-debian-10)
 * [Request a free cert from Let's Encrypt](https://docs.iredmail.org/letsencrypt.html)
 * [Update: Using Free Let’s Encrypt SSL/TLS Certificates with NGINX](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
