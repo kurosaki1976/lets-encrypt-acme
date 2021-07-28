@@ -80,7 +80,7 @@ export NSUPDATE_ZONE="example.tld"
 acme.sh --issue -d example.tld -d *.example.tld --days 90 --dns dns_nsupdate --dnssleep 60
 ```
 
-If everything succeeded, it should get two `TXT` sample records temporarily added to zone `example.tld`:
+If everything succeeded, it should get two `TXT` sample records temporarily added to zone `example.tld` similarily to:
 
 ```bash
 _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDgcDs"
