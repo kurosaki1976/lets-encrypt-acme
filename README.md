@@ -89,10 +89,10 @@ _acme-challenge.example.tld. 60 IN TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI
 
 > **NOTE**: To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
 
-```bash
-example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
-                   CAA 0 iodef "mailto:john.doe@example.tld"
-```
+> ```bash
+> example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
+>                    CAA 0 iodef "mailto:john.doe@example.tld"
+> ```
 
 ## Automate certificate renewal
 
