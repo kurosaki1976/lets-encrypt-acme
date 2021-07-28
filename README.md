@@ -1,4 +1,4 @@
-# Let's Encrypt SSL wildcard certificates with acme.sh
+# Let's Encrypt SSL wildcard certificates with acme.sh auto renewal
 
 ## Author
 
@@ -6,10 +6,12 @@
 
 ## Installation
 
+- Git clone and install
+
 ```bash
 apt install git socat
 git clone https://github.com/acmesh-official/acme.sh.git
-cd ./acme.sh
+cd acme.sh/
 ./acme.sh --install \
 	--home /opt/acme.sh \
 	--config-home /opt/acme.sh/data \
@@ -21,47 +23,75 @@ cd ./acme.sh
 
 > **NOTE**: The installation process takes place on a Bind9 DNS server running GNU/Linux Debian 10 Buster.
 
-## Issue a certificate
+## Issuing/renewing certificates automatically with nsupdate
+
+- Generate a key for updating the zone
 
 ```bash
-acme.sh --issue -d example.tld -d *.example.tld --days 90 --yes-I-know-dns-manual-mode-enough-go-ahead-please --dns
+b=$(dnssec-keygen -a hmac-sha512 -b 512 -n USER -K /tmp acme)
+cat > /etc/bind/nsupdate.key <<EOF
+key "letsencrypt" {
+    algorithm hmac-sha512;
+    secret "$(awk '/^Key/{print $2}' /tmp/$b.private)";
+};
+EOF
+rm -f /tmp/$b.{private,key}
 ```
 
-You should get an output like below:
+- Secure the key
 
 ```bash
-Add the following txt record:
-Domain:_acme-challenge.example.tld
-Txt value:W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDgcDs
-
-Add the following txt record:
-Domain:_acme-challenge.example.tld
-Txt value:NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0
+chmod 640 /etc/bind/nsupdate.key
+chown bind.bind /etc/bind/nsupdate.key
 ```
 
-Next, you should add these two `TXT` records to your `example.tld` forward zone:
+- Include the key in bind9 main configuration file
+
+```bash
+nano /etc/bind/named.conf
+
+...
+include "/etc/bind/nsupdate.key";
+...
+```
+
+- Configure the zone to allow dynamic updates
+
+```bash
+zone "example.tld" {
+    type master;
+    update-policy {
+        grant "letsencrypt" name _acme-challenge.example.tld. TXT;
+    };
+}
+```
+
+- Make the DNS server and update key available to acme.sh
+
+```bash
+export NSUPDATE_SERVER="127.0.0.1"
+export NSUPDATE_KEY="/etc/bind/nsupdate.key"
+export NSUPDATE_ZONE="example.tld"
+```
+
+- Issue a wildcard certificate
+
+```bash
+acme.sh --issue -d example.tld -d *.example.tld --days 90 --dns dns_nsupdate --dnssleep 60
+```
+
+If everything succeeded, it should get two `TXT` sample records temporarily added to zone `example.tld`:
 
 ```bash
 _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDgcDs"
-                                   TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
+_acme-challenge.example.tld. 60 IN TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
 ```
 
-To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
+> **NOTE**: To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
 
 ```bash
 example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
-                   CAA 0 iodef "mailto:postmaster@example.tld"
-```
-
-## Renew the certificate
-
-```bash
-acme.sh --renew -d example.tld -d *.example.tld --days 90 --yes-I-know-dns-manual-mode-enough-go-ahead-please --dns
-
-Your cert is in  /opt/.acme.sh/example.tld/example.tld.cer
-Your cert key is in  /opt/.acme.sh/example.tld/example.tld.key
-The intermediate CA cert is in  /opt/.acme.sh/example.tld/ca.cer
-And the full chain certs is there:  /opt/.acme.sh/example.tld/fullchain.cer
+                   CAA 0 iodef "mailto:john.doe@example.tld"
 ```
 
 ## Automate certificate renewal
@@ -69,7 +99,7 @@ And the full chain certs is there:  /opt/.acme.sh/example.tld/fullchain.cer
 ```bash
 crontab -e
 
-0 0 1 */3 * "/opt/acme.sh"/acme.sh --renew -d example.tld -d *.example.tld --days 90 --yes-I-know-dns-manual-mode-enough-go-ahead-please > /dev/null
+0 0 1 */2 * "/opt/acme.sh"/acme.sh --renew -d example.tld -d *.example.tld --days 90 --dns dns_nsupdate --dnssleep 60 > /dev/null
 ```
 
 ## Stop certificate renewal
@@ -271,7 +301,7 @@ systemctl restart nginx.service
 
 ## References
 
-* [acme.sh A pure Unix shell script implementing ACME client protocol](https://github.com/acmesh-official/acme.sh)
+* [An ACME Shell script: acme.sh](https://github.com/acmesh-official/acme.sh)
 * [cerbot](https://certbot.eff.org/)
 * [Installing a Let's Encrypt SSL Certificate](https://wiki.zimbra.com/wiki/Installing_a_LetsEncrypt_SSL_Certificate)
 * [Deploy Commercial SSL Certificate on Proxmox Mail Gateway](https://dhenandi.com/deploy-commercial-ssl-certificate-on-proxmox-mail-gateway/)
@@ -291,3 +321,6 @@ systemctl restart nginx.service
 * [SSL Server Test](https://www.ssllabs.com/ssltest)
 * [SSL and TLS Deployment Best Practices](https://github.com/ssllabs/research/wiki/SSL-and-TLS-Deployment-Best-Practices)
 * [SSL Server Rating Guide](https://github.com/ssllabs/research/wiki/SSL-Server-Rating-Guide)
+* [pfSense as Name Server (bind9) with Let’s Encrypt/acme DNS-NSupdate/RFC 2136](https://forum.level1techs.com/t/pfsense-as-name-server-bind9-with-lets-encrypt-acme-dns-nsupdate-rfc-2136/168097)
+* [Creating Wildcard Certificates on pfSense with Let’s Encrypt](https://www.danielcolomb.com/2019/08/29/creating-wildcard-certificates-on-pfsense-with-lets-encrypt/)
+* [pfSense setup ACME Lets Encrypt](https://www.youtube.com/watch?v=Tc_8PAE8S28)
