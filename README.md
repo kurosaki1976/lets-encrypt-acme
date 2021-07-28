@@ -321,3 +321,5 @@ systemctl restart nginx.service
 * [pfSense as Name Server (bind9) with Let’s Encrypt/acme DNS-NSupdate/RFC 2136](https://forum.level1techs.com/t/pfsense-as-name-server-bind9-with-lets-encrypt-acme-dns-nsupdate-rfc-2136/168097)
 * [Creating Wildcard Certificates on pfSense with Let’s Encrypt](https://www.danielcolomb.com/2019/08/29/creating-wildcard-certificates-on-pfsense-with-lets-encrypt/)
 * [pfSense setup ACME Lets Encrypt](https://www.youtube.com/watch?v=Tc_8PAE8S28)
+* [BIND update-policy option](http://www.ipamworldwide.com/ipam/update-policy.html)
+* [Setting up BIND to get the letsencrypt wildcards to work on your system using RFC 2136](https://linux.m2osw.com/setting-bind-get-letsencrypt-wildcards-work-your-system-using-rfc-2136)
