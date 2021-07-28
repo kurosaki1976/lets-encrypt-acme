@@ -87,7 +87,7 @@ _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDg
 _acme-challenge.example.tld. 60 IN TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
 ```
 
-> **TIP**: To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
+> **TIP**: To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` records:
 >
 > ```bash
 > example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
