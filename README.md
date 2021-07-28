@@ -221,15 +221,18 @@ Use the Web GUI to deploy the files `fullchain.cer` and `example.tld.key`.
 (System/Advanced/Admin Access/SSL/TLS Certificate)
 ```
 
-### Let's Encrypt SSL Certificate on Apache Web Server
+### Let's Encrypt SSL Certificate on Web Server
 
 ```bash
-mv fullchain.cer /etc/ssl/certs/exampleTLD.fullchain.cer
+mv fullchain.cer /etc/ssl/certs/
 mv example.tld.cer /etc/ssl/certs/
 mv example.tld.key /etc/ssl/private/
-chmod 0444 /etc/ssl/certs/{example.tld,xampleTLD.fullchain}.cer
+chmod 0444 /etc/ssl/certs/{example.tld,fullchain}.cer
 chmod 0400 /etc/ssl/private/example.tld.key
 ```
+
+#### Apache
+
 ```bash
 nano /etc/apache2/sites-available/exampleTLD.conf
 
@@ -237,7 +240,7 @@ nano /etc/apache2/sites-available/exampleTLD.conf
 SSLEngine on
 SSLCertificateFile /etc/ssl/certs/example.tld.cer
 SSLCertificateKeyFile /etc/ssl/private/example.tld.key
-SSLCertificateChainFile "/etc/ssl/certs/exampleTLD.fullchain.cer"
+SSLCertificateChainFile "/etc/ssl/certs/fullchain.cer"
 SSLProtocol -all +TLSv1.3 +TLSv1.2
 SSLCipherSuite EECDH+AESGCM:EDH+AESGCM
 SSLHonorCipherOrder on
@@ -261,20 +264,14 @@ apache2ctl -t
 systemctl restart apache2.service
 ```
 
-### Let's Encrypt SSL Certificate on Nginx Web Server
+#### Nginx
 
-```bash
-mv fullchain.cer /etc/ssl/certs/exampleTLD.fullchain.cer
-mv example.tld.key /etc/ssl/private/
-chmod 0444 /etc/ssl/certs/exampleTLD.fullchain.cer
-chmod 0400 /etc/ssl/private/example.tld.key
-```
 ```bash
 nano /etc/nginx/sites-available/exampleTLD
 
 ...
 ssl on;
-ssl_certificate /etc/ssl/certs/exampleTLD.fullchain.cer;
+ssl_certificate /etc/ssl/certs/fullchain.cer;
 ssl_certificate_key /etc/ssl/private/example.tld.key;
 ssl_dhparam /etc/ssl/dh4096.pem;
 ssl_protocols TLSv1.2 TLSv1.3;
