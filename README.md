@@ -6,6 +6,8 @@
 
 ## Installation
 
+In this tutorial the acme.sh installation and the issuing/renewing certificates' process take place on a Bind9 DNS server running GNU/Linux Debian 10 Buster.
+
 - Git clone and install
 
 ```bash
@@ -20,8 +22,6 @@ cd acme.sh/
 	--accountkey /opt/acme.sh/example.tld.key \
 	--accountconf /opt/acme.sh/example.tld.conf
 ```
-
-> **NOTE**: The installation process takes place on a Bind9 DNS server running GNU/Linux Debian 10 Buster.
 
 ## Issuing/renewing certificates automatically with nsupdate
 
@@ -45,7 +45,7 @@ chmod 640 /etc/bind/nsupdate.key
 chown bind.bind /etc/bind/nsupdate.key
 ```
 
-- Include the key in bind9 main configuration file
+- Include the key in Bind9 main configuration file
 
 ```bash
 nano /etc/bind/named.conf
@@ -80,14 +80,14 @@ export NSUPDATE_ZONE="example.tld"
 acme.sh --issue -d example.tld -d *.example.tld --days 90 --dns dns_nsupdate --dnssleep 60
 ```
 
-If everything succeeded, it should get two `TXT` records temporarily added to zone `example.tld` similarily to:
+If everything succeeded, it should get two `TXT` records temporarily added to zone `example.tld`, similarily to:
 
 ```bash
 _acme-challenge.example.tld. 60 IN TXT "W_-Qk9a2e5xlMWEJHfbl5Sp_vw8T1oLsIaIthzDgcDs"
 _acme-challenge.example.tld. 60 IN TXT "NQ9KX3PSo0T_qhIKyAYQoBq7XRng3WwfnV58YyeI9k0"
 ```
 
-> **NOTE**: To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
+> **TIP**: To allow Let’s Encrypt certificate authority the issuance of SSL certificates for `example.tld`, add the following `CAA` record:
 >
 > ```bash
 > example.tld. 60 IN CAA 0 issuewild "letsencrypt.org"
