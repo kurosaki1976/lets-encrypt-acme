@@ -6,7 +6,7 @@
 
 ## Installation
 
-In this tutorial the acme.sh installation and the issuing/renewing certificates' process take place on a Bind9 DNS server running GNU/Linux Debian 10 Buster.
+In this tutorial the acme.sh installation and the issuing/renewing certificates' process take place on a Bind9 DNS server running GNU/Linux Debian 12 Bookworm.
 
 - Git clone and install
 
@@ -28,14 +28,9 @@ cd acme.sh/
 - Generate a key for updating the zone
 
 ```bash
-b=$(dnssec-keygen -a hmac-sha512 -b 512 -n USER -K /tmp acme)
 cat > /etc/bind/nsupdate.key <<EOF
-key "letsencrypt" {
-    algorithm hmac-sha512;
-    secret "$(awk '/^Key/{print $2}' /tmp/$b.private)";
-};
+`tsig-keygen -a hmac-sha512 letsencrypt-key`
 EOF
-rm -f /tmp/$b.{private,key}
 ```
 
 - Secure the key
